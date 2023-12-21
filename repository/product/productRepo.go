@@ -23,6 +23,7 @@ func convertModelToEntity(source *models.Product) entity.Product {
 	target.Title = source.Title
 	target.Price = source.Price
 	target.Stock = source.Stock
+	target.CreatedAt = source.CreatedAt
 	target.CategoryId = source.CategoryID
 	target.Category = entity.Category{
 		Id:                int(source.Category.ID),
@@ -40,6 +41,7 @@ func convertEntityToModel(source *entity.Product) models.Product {
 	target.Price = source.Price
 	target.Stock = source.Stock
 	target.CategoryID = source.CategoryId
+	target.CreatedAt = source.CreatedAt
 
 	return target
 }
