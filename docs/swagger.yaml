@@ -1,0 +1,470 @@
+basePath: /api/v1
+definitions:
+  category.CategoryRequest:
+    properties:
+      type:
+        type: string
+    required:
+    - type
+    type: object
+  category.CategoryResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      sold_product_amount:
+        type: integer
+      type:
+        type: string
+    type: object
+  entity.Category:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/entity.Product'
+        type: array
+      soldProductAmount:
+        type: integer
+      type:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - type
+    type: object
+  entity.Product:
+    properties:
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      price:
+        type: integer
+      stock:
+        type: integer
+      title:
+        type: string
+    type: object
+  entity.TransactionHistory:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      product:
+        $ref: '#/definitions/entity.Product'
+      productId:
+        type: integer
+      quantity:
+        type: integer
+      totalPrice:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/entity.User'
+      userId:
+        type: integer
+    type: object
+  entity.User:
+    properties:
+      balance:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - balance
+    - email
+    - full_name
+    - role
+    type: object
+  handler.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  product.ProductRequest:
+    properties:
+      category_id:
+        type: integer
+      price:
+        maximum: 50000000
+        minimum: 0
+        type: integer
+      stock:
+        minimum: 5
+        type: integer
+      title:
+        type: string
+    required:
+    - category_id
+    - price
+    - stock
+    - title
+    type: object
+  transaction.CreateTransactionResponse:
+    properties:
+      message:
+        type: string
+      transaction_bill:
+        $ref: '#/definitions/transaction.TransactionBill'
+    type: object
+  transaction.TransactionBill:
+    properties:
+      product_title:
+        type: string
+      quantity:
+        type: integer
+      total_price:
+        type: integer
+    type: object
+  transaction.TransactionRequest:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  user.Credentials:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  user.RegisterRequest:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - fullName
+    type: object
+  user.TopUpRequest:
+    properties:
+      balance:
+        maximum: 100000000
+        minimum: 0
+        type: integer
+    required:
+    - balance
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This API Documentation for Toko Belanja.
+  title: Toko Belanja API
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      description: Get all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/entity.Category'
+              type: array
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get all categories
+      tags:
+      - Category
+    post:
+      description: Create a new category
+      parameters:
+      - description: New category data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/category.CategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/category.CategoryResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new category
+      tags:
+      - Category
+  /categories/:id:
+    delete:
+      description: Delete a category
+      parameters:
+      - description: Category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.MessageResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a category
+      tags:
+      - Category
+    patch:
+      description: Update a category
+      parameters:
+      - description: New category data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/category.CategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/category.CategoryResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a category
+      tags:
+      - Category
+  /products:
+    get:
+      description: Get all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/entity.Product'
+              type: array
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get all products
+      tags:
+      - Product
+    post:
+      description: Create a new product
+      parameters:
+      - description: New product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/product.ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Product'
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Product
+  /products/{id}:
+    put:
+      description: Update a product
+      parameters:
+      - description: Product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/product.ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Product'
+      security:
+      - BearerAuth: []
+      summary: Update a product
+      tags:
+      - Product
+  /transactions:
+    post:
+      description: Create a transaction
+      parameters:
+      - description: New transaction data
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/transaction.TransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/transaction.CreateTransactionResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a transaction
+      tags:
+      - Transaction
+  /transactions/my-transactions:
+    get:
+      description: Get all transactions of current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/entity.TransactionHistory'
+              type: array
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get all transactions of current user
+      tags:
+      - Transaction
+  /transactions/user-transactions:
+    get:
+      description: Get all transactions (Admin only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/entity.TransactionHistory'
+              type: array
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get all transactions
+      tags:
+      - Transaction
+  /users/login:
+    post:
+      description: Login
+      parameters:
+      - description: User credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/user.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.LoginResponse'
+      summary: Login
+      tags:
+      - User
+  /users/register:
+    post:
+      description: Register a new user
+      parameters:
+      - description: Registration Request JSON
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.User'
+      summary: Register a new user
+      tags:
+      - User
+  /users/topup:
+    patch:
+      description: Top up user balance
+      parameters:
+      - description: Amount to add to user balance
+        in: body
+        name: balance
+        required: true
+        schema:
+          $ref: '#/definitions/user.TopUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.MessageResponse'
+      security:
+      - BearerAuth: []
+      summary: Top up
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    description: Bearer token authorization
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
