@@ -28,14 +28,12 @@ definitions:
         items:
           $ref: '#/definitions/entity.Product'
         type: array
-      soldProductAmount:
+      sold_product_amount:
         type: integer
       type:
         type: string
       updated_at:
         type: string
-    required:
-    - type
     type: object
   entity.Product:
     properties:

@@ -491,9 +491,6 @@ const docTemplate = `{
         },
         "entity.Category": {
             "type": "object",
-            "required": [
-                "type"
-            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -507,7 +504,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/entity.Product"
                     }
                 },
-                "soldProductAmount": {
+                "sold_product_amount": {
                     "type": "integer"
                 },
                 "type": {

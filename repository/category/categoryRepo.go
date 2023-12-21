@@ -33,6 +33,8 @@ func convertModelToEntity(source *models.Category) entity.Category {
 		prodEntity.Price = prodModel.Price
 		prodEntity.Stock = prodModel.Stock
 		prodEntity.CategoryId = prodModel.CategoryID
+		prodEntity.CreatedAt = prodModel.CreatedAt
+		prodEntity.UpdatedAt = prodModel.UpdatedAt
 		products = append(products, prodEntity)
 	}
 	target.Products = products
