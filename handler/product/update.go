@@ -1,7 +1,6 @@
 package product
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"tokbel/handler"
@@ -23,7 +22,6 @@ import (
 func Update(service *services.ProductService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idStr := c.Param("id")
-		fmt.Println("==>> id str: ", idStr)
 		productId, err := strconv.Atoi(idStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

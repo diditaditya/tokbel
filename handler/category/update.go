@@ -1,6 +1,7 @@
 package category
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"tokbel/handler"
@@ -15,12 +16,14 @@ import (
 // @Tags Category
 // @Produce json
 // @Security BearerAuth
+// @Param id path int true "Category id"
 // @Param category body CategoryRequest true "New category data"
 // @Success 200 {object} CategoryResponse
-// @Router /categories/:id [patch]
+// @Router /categories/{id} [patch]
 func Update(service *services.CategoryService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idStr := c.Param("id")
+		fmt.Println("==>> id str: ", idStr)
 		categoryId, err := strconv.Atoi(idStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

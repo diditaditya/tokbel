@@ -80,7 +80,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/categories/:id": {
+        "/categories/{id}": {
             "delete": {
                 "security": [
                     {
@@ -128,6 +128,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update a category",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "New category data",
                         "name": "category",
@@ -488,7 +495,7 @@ const docTemplate = `{
                 "type"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
@@ -506,7 +513,7 @@ const docTemplate = `{
                 "type": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -531,37 +538,31 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
         "entity.TransactionHistory": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
                 "product": {
                     "$ref": "#/definitions/entity.Product"
                 },
-                "productId": {
+                "product_id": {
                     "type": "integer"
                 },
                 "quantity": {
                     "type": "integer"
                 },
-                "totalPrice": {
+                "total_price": {
                     "type": "integer"
                 },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/entity.User"
-                },
-                "userId": {
+                "user_id": {
                     "type": "integer"
                 }
             }
@@ -743,7 +744,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Toko Belanja API",

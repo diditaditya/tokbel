@@ -20,7 +20,7 @@ definitions:
     type: object
   entity.Category:
     properties:
-      createdAt:
+      created_at:
         type: string
       id:
         type: integer
@@ -32,7 +32,7 @@ definitions:
         type: integer
       type:
         type: string
-      updatedAt:
+      updated_at:
         type: string
     required:
     - type
@@ -51,26 +51,22 @@ definitions:
         type: integer
       title:
         type: string
+      updatedAt:
+        type: string
     type: object
   entity.TransactionHistory:
     properties:
-      createdAt:
-        type: string
       id:
         type: integer
       product:
         $ref: '#/definitions/entity.Product'
-      productId:
+      product_id:
         type: integer
       quantity:
         type: integer
-      totalPrice:
+      total_price:
         type: integer
-      updatedAt:
-        type: string
-      user:
-        $ref: '#/definitions/entity.User'
-      userId:
+      user_id:
         type: integer
     type: object
   entity.User:
@@ -183,7 +179,6 @@ definitions:
     required:
     - balance
     type: object
-host: localhost:8080
 info:
   contact: {}
   description: This API Documentation for Toko Belanja.
@@ -230,7 +225,7 @@ paths:
       summary: Create a new category
       tags:
       - Category
-  /categories/:id:
+  /categories/{id}:
     delete:
       description: Delete a category
       parameters:
@@ -254,6 +249,11 @@ paths:
     patch:
       description: Update a category
       parameters:
+      - description: Category id
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: New category data
         in: body
         name: category

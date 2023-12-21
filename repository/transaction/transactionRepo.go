@@ -24,12 +24,16 @@ func convertModelToEntity(source *models.TransactionHistory) entity.TransactionH
 	target.ProductId = source.ProductID
 	target.Quantity = source.Quantity
 	target.TotalPrice = source.TotalPrice
+	target.CreatedAt = source.CreatedAt
+	target.UpdatedAt = source.UpdatedAt
 	target.Product = entity.Product{
 		Id:         int(source.Product.ID),
 		Title:      source.Product.Title,
 		Price:      source.Product.Price,
 		Stock:      source.Product.Stock,
 		CategoryId: source.Product.CategoryID,
+		CreatedAt:  source.Product.CreatedAt,
+		UpdatedAt:  source.Product.UpdatedAt,
 	}
 	target.User = entity.User{
 		Id:       int(source.User.ID),
@@ -70,7 +74,7 @@ func (repo *TransactionHistoryRepo) FindAll() []entity.TransactionHistory {
 
 func (repo *TransactionHistoryRepo) FindByUserId(userId int) []entity.TransactionHistory {
 	var found []models.TransactionHistory
-	result := repo.db.Where("user_id = ?", userId).Preload("Product").Find(&found)
+	result := repo.db.Where("user_id = ?", userId).Preload("User").Preload("Product").Find(&found)
 	if result.Error != nil {
 		log.Println("error finding all categories")
 		return []entity.TransactionHistory{}

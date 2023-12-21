@@ -2,8 +2,9 @@ package main
 
 import (
 	"log"
+	"os"
 	"tokbel/config"
-	_ "tokbel/docs"
+	"tokbel/docs"
 	"tokbel/handler/category"
 	"tokbel/handler/middleware"
 	"tokbel/handler/product"
@@ -22,7 +23,6 @@ import (
 //	@version		1.0
 //	@description	This API Documentation for Toko Belanja.
 
-//	@host		localhost:8080
 //	@BasePath	/api/v1
 
 //	@securityDefinitions.apiKey	BearerAuth
@@ -35,6 +35,8 @@ func main() {
 	if err != nil {
 		log.Println("failed to load env file")
 	}
+
+	docs.SwaggerInfo.Host = os.Getenv("HOST")
 
 	repo := repository.New(config.GetDBConfig())
 	userService := services.NewUserService(repo.User)
@@ -63,12 +65,12 @@ func main() {
 		}
 
 		productGrp := v1.Group("/products")
-		productGrp.Use(middleware.Authenticated(), middleware.AdminOnly(userService))
+		productGrp.Use(middleware.Authenticated())
 		{
-			productGrp.POST("/", product.Create(productService))
 			productGrp.GET("/", product.FindAll(productService))
-			productGrp.PUT("/:id", product.Update(productService))
-			productGrp.DELETE("/:id", product.Delete(productService))
+			productGrp.Use(middleware.AdminOnly(userService)).POST("/", product.Create(productService))
+			productGrp.Use(middleware.AdminOnly(userService)).PUT("/:id", product.Update(productService))
+			productGrp.Use(middleware.AdminOnly(userService)).DELETE("/:id", product.Delete(productService))
 		}
 
 		trxGrp := v1.Group("/transactions")

@@ -34,7 +34,7 @@ func (service *UserService) Register(user *entity.User) (*entity.User, error) {
 func (service *UserService) Login(email string, password string) (string, error) {
 	found, err := service.userRepo.FindByEmail(email)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	if !auth.CheckPassword(password, found.Password) {
