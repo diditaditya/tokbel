@@ -51,7 +51,7 @@ definitions:
         type: integer
       title:
         type: string
-      updatedAt:
+      updated_at:
         type: string
     type: object
   entity.TransactionHistory:
