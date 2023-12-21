@@ -2,6 +2,8 @@
 
 CSGA Final Project
 
+This has been deployed to http://203.194.114.113
+
 ## Getting Started
 
 Clone this repository
@@ -22,6 +24,7 @@ DB_PORT=
 DB_NAME=
 DB_USER=
 DB_PASSWORD=
+HOST=
 JWT_SECRET=
 ```
 

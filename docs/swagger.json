@@ -6,7 +6,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
         "/categories": {
@@ -122,6 +121,13 @@
                 ],
                 "summary": "Update a category",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "New category data",
                         "name": "category",
@@ -482,7 +488,7 @@
                 "type"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
@@ -500,7 +506,7 @@
                 "type": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }

@@ -129,6 +129,13 @@ const docTemplate = `{
                 "summary": "Update a category",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Category id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "New category data",
                         "name": "category",
                         "in": "body",
@@ -488,7 +495,7 @@ const docTemplate = `{
                 "type"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
@@ -506,7 +513,7 @@ const docTemplate = `{
                 "type": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -743,7 +750,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Toko Belanja API",

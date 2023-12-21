@@ -5,16 +5,20 @@ import (
 	"log"
 	"tokbel/entity"
 	"tokbel/repository/models"
+	"tokbel/repository/utils"
+	"tokbel/services/data"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UserRepo struct {
-	db *gorm.DB
+	db     *gorm.DB
+	locker *utils.Locker
 }
 
-func New(db *gorm.DB) *UserRepo {
-	return &UserRepo{db: db}
+func New(db *gorm.DB, locker *utils.Locker) *UserRepo {
+	return &UserRepo{db: db, locker: locker}
 }
 
 func convertModelToEntity(source *models.User) entity.User {
@@ -60,9 +64,16 @@ func (repo *UserRepo) FindAll() []entity.User {
 	return data
 }
 
-func (repo *UserRepo) FindById(id int) (*entity.User, error) {
+func (repo *UserRepo) FindById(id int, lock *data.Lock) (*entity.User, error) {
 	var found models.User
-	result := repo.db.First(&found, id)
+	var result *gorm.DB
+	tx := repo.db
+	if lock == nil {
+		result = tx.First(&found, id)
+	} else {
+		tx = repo.locker.GetLock(lock)
+		result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&found, id)
+	}
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("data not found")
@@ -99,9 +110,16 @@ func (repo *UserRepo) Create(user *entity.User) (*entity.User, error) {
 	return &data, nil
 }
 
-func (repo *UserRepo) Update(user *entity.User) (*entity.User, error) {
+func (repo *UserRepo) Update(user *entity.User, lock *data.Lock) (*entity.User, error) {
 	var found models.User
-	result := repo.db.First(&found, user.Id)
+	var result *gorm.DB
+	tx := repo.db
+	if lock == nil {
+		result = tx.First(&found, user.Id)
+	} else {
+		tx = repo.locker.GetLock(lock)
+		result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&found, user.Id)
+	}
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("data not found")
@@ -110,7 +128,7 @@ func (repo *UserRepo) Update(user *entity.User) (*entity.User, error) {
 	}
 
 	model := convertEntityToModel(user)
-	result = repo.db.Save(&model)
+	result = tx.Save(&model)
 	if result.Error != nil {
 		return nil, errors.New("something went wrong")
 	}

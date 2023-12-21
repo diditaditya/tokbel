@@ -20,7 +20,7 @@ definitions:
     type: object
   entity.Category:
     properties:
-      createdAt:
+      created_at:
         type: string
       id:
         type: integer
@@ -32,7 +32,7 @@ definitions:
         type: integer
       type:
         type: string
-      updatedAt:
+      updated_at:
         type: string
     required:
     - type
@@ -183,7 +183,6 @@ definitions:
     required:
     - balance
     type: object
-host: localhost:8080
 info:
   contact: {}
   description: This API Documentation for Toko Belanja.
@@ -254,6 +253,11 @@ paths:
     patch:
       description: Update a category
       parameters:
+      - description: Category id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: New category data
         in: body
         name: category

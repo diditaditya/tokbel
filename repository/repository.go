@@ -10,6 +10,7 @@ import (
 	"tokbel/repository/product"
 	"tokbel/repository/transaction"
 	"tokbel/repository/user"
+	"tokbel/repository/utils"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -17,6 +18,7 @@ import (
 
 type Repository struct {
 	db          *gorm.DB
+	Locker      *utils.Locker
 	User        *user.UserRepo
 	Category    *category.CategoryRepo
 	Product     *product.ProductRepo
@@ -25,12 +27,14 @@ type Repository struct {
 
 func New(conf *config.DBConfig) *Repository {
 	db := connectToDB(conf)
+	locker := utils.NewLocker(db)
 	repo := Repository{
 		db:          db,
-		User:        user.New(db),
-		Category:    category.New(db),
-		Product:     product.New(db),
-		Transaction: transaction.New(db),
+		Locker:      locker,
+		User:        user.New(db, locker),
+		Category:    category.New(db, locker),
+		Product:     product.New(db, locker),
+		Transaction: transaction.New(db, locker),
 	}
 
 	repo.prepareDB()

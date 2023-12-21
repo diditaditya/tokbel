@@ -15,6 +15,7 @@ import (
 // @Tags Category
 // @Produce json
 // @Security BearerAuth
+// @Param id path string true "Category id"
 // @Param category body CategoryRequest true "New category data"
 // @Success 200 {object} CategoryResponse
 // @Router /categories/:id [patch]

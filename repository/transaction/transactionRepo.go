@@ -5,16 +5,20 @@ import (
 	"log"
 	"tokbel/entity"
 	"tokbel/repository/models"
+	"tokbel/repository/utils"
+	"tokbel/services/data"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type TransactionHistoryRepo struct {
-	db *gorm.DB
+	db     *gorm.DB
+	locker *utils.Locker
 }
 
-func New(db *gorm.DB) *TransactionHistoryRepo {
-	return &TransactionHistoryRepo{db: db}
+func New(db *gorm.DB, locker *utils.Locker) *TransactionHistoryRepo {
+	return &TransactionHistoryRepo{db: db, locker: locker}
 }
 
 func convertModelToEntity(source *models.TransactionHistory) entity.TransactionHistory {
@@ -83,19 +87,28 @@ func (repo *TransactionHistoryRepo) FindByUserId(userId int) []entity.Transactio
 	return data
 }
 
-func (repo *TransactionHistoryRepo) Create(trx *entity.TransactionHistory) (*entity.TransactionHistory, error) {
+func (repo *TransactionHistoryRepo) Create(trx *entity.TransactionHistory, lock *data.Lock) (*entity.TransactionHistory, error) {
 	if trx == nil {
 		return nil, errors.New("data to save is required")
 	}
 
 	raw := convertEntityToModel(trx)
-	result := repo.db.Create(&raw)
+
+	var result *gorm.DB
+	tx := repo.db
+	if lock == nil {
+		result = tx.Create(&raw)
+	} else {
+		tx = repo.locker.GetLock(lock)
+		result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).Create(&raw)
+	}
+
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
 	var created models.TransactionHistory
-	result = repo.db.Preload("Product").Preload("User").First(&created, raw.ID)
+	result = tx.Preload("Product").Preload("User").First(&created, raw.ID)
 	if result.Error != nil {
 		return nil, result.Error
 	}
