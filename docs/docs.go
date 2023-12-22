@@ -80,7 +80,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/categories/:id": {
+        "/categories/{id}": {
             "delete": {
                 "security": [
                     {
@@ -129,7 +129,7 @@ const docTemplate = `{
                 "summary": "Update a category",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Category id",
                         "name": "id",
                         "in": "path",
@@ -322,7 +322,7 @@ const docTemplate = `{
                             "items": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/definitions/entity.TransactionHistory"
+                                    "$ref": "#/definitions/transaction.UserTransaction"
                                 }
                             }
                         }
@@ -491,9 +491,6 @@ const docTemplate = `{
         },
         "entity.Category": {
             "type": "object",
-            "required": [
-                "type"
-            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -507,7 +504,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/entity.Product"
                     }
                 },
-                "soldProductAmount": {
+                "sold_product_amount": {
                     "type": "integer"
                 },
                 "type": {
@@ -538,37 +535,34 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
         "entity.TransactionHistory": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
                 "product": {
                     "$ref": "#/definitions/entity.Product"
                 },
-                "productId": {
+                "product_id": {
                     "type": "integer"
                 },
                 "quantity": {
                     "type": "integer"
                 },
-                "totalPrice": {
+                "total_price": {
                     "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
                 },
                 "user": {
                     "$ref": "#/definitions/entity.User"
                 },
-                "userId": {
+                "user_id": {
                     "type": "integer"
                 }
             }
@@ -596,9 +590,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "password": {
-                    "type": "string"
                 },
                 "role": {
                     "type": "string"
@@ -678,6 +669,29 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "transaction.UserTransaction": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "product": {
+                    "$ref": "#/definitions/entity.Product"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "total_price": {
+                    "type": "integer"
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }

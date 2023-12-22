@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -37,7 +38,16 @@ func main() {
 		log.Println("failed to load env file")
 	}
 
-	docs.SwaggerInfo.Host = os.Getenv("HOST")
+	host := "localhost"
+	if len(os.Getenv("HOST")) > 0 {
+		host = os.Getenv("HOST")
+	}
+	port := "8080"
+	if len(os.Getenv("PORT")) > 0 {
+		port = os.Getenv("PORT")
+	}
+
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
 
 	repo := repository.New(config.GetDBConfig())
 	userService := services.NewUserService(repo.User)
@@ -72,12 +82,12 @@ func main() {
 		}
 
 		productGrp := v1.Group("/products")
-		productGrp.Use(middleware.Authenticated(), middleware.AdminOnly(userService))
+		productGrp.Use(middleware.Authenticated())
 		{
-			productGrp.POST("/", product.Create(productService))
 			productGrp.GET("/", product.FindAll(productService))
-			productGrp.PUT("/:id", product.Update(productService))
-			productGrp.DELETE("/:id", product.Delete(productService))
+			productGrp.Use(middleware.AdminOnly(userService)).POST("/", product.Create(productService))
+			productGrp.Use(middleware.AdminOnly(userService)).PUT("/:id", product.Update(productService))
+			productGrp.Use(middleware.AdminOnly(userService)).DELETE("/:id", product.Delete(productService))
 		}
 
 		trxGrp := v1.Group("/transactions")
@@ -91,5 +101,5 @@ func main() {
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Run(":8080")
+	r.Run(fmt.Sprintf(":%s", port))
 }

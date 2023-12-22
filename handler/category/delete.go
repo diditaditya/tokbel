@@ -17,7 +17,7 @@ import (
 // @Security BearerAuth
 // @Param id path int true "Category id"
 // @Success 200 {object} handler.MessageResponse
-// @Router /categories/:id [delete]
+// @Router /categories/{id} [delete]
 func Delete(service *services.CategoryService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idStr := c.Param("id")

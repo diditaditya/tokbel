@@ -28,14 +28,12 @@ definitions:
         items:
           $ref: '#/definitions/entity.Product'
         type: array
-      soldProductAmount:
+      sold_product_amount:
         type: integer
       type:
         type: string
       updated_at:
         type: string
-    required:
-    - type
     type: object
   entity.Product:
     properties:
@@ -51,26 +49,24 @@ definitions:
         type: integer
       title:
         type: string
+      updated_at:
+        type: string
     type: object
   entity.TransactionHistory:
     properties:
-      createdAt:
-        type: string
       id:
         type: integer
       product:
         $ref: '#/definitions/entity.Product'
-      productId:
+      product_id:
         type: integer
       quantity:
         type: integer
-      totalPrice:
+      total_price:
         type: integer
-      updatedAt:
-        type: string
       user:
         $ref: '#/definitions/entity.User'
-      userId:
+      user_id:
         type: integer
     type: object
   entity.User:
@@ -85,8 +81,6 @@ definitions:
         type: string
       id:
         type: integer
-      password:
-        type: string
       role:
         type: string
       updated_at:
@@ -146,6 +140,21 @@ definitions:
     required:
     - product_id
     - quantity
+    type: object
+  transaction.UserTransaction:
+    properties:
+      id:
+        type: integer
+      product:
+        $ref: '#/definitions/entity.Product'
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      total_price:
+        type: integer
+      user_id:
+        type: integer
     type: object
   user.Credentials:
     properties:
@@ -229,7 +238,7 @@ paths:
       summary: Create a new category
       tags:
       - Category
-  /categories/:id:
+  /categories/{id}:
     delete:
       description: Delete a category
       parameters:
@@ -257,7 +266,7 @@ paths:
         in: path
         name: id
         required: true
-        type: string
+        type: integer
       - description: New category data
         in: body
         name: category
@@ -376,7 +385,7 @@ paths:
           schema:
             items:
               items:
-                $ref: '#/definitions/entity.TransactionHistory'
+                $ref: '#/definitions/transaction.UserTransaction'
               type: array
             type: array
       security:

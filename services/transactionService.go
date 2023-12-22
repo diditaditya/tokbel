@@ -39,10 +39,6 @@ func (service *TransactionService) FindByUserId(userId int) []entity.Transaction
 }
 
 func (service *TransactionService) Create(trx *entity.TransactionHistory) (*entity.TransactionHistory, error) {
-	// NOTE: this process is prone to race condition!
-	// NOTE: use locking mechanism and db transaction!
-	// NOTE: the following processes can be run simultaneously
-
 	lock := service.locker.StartLock()
 
 	// check if product exists

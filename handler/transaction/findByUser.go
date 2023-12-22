@@ -13,12 +13,24 @@ import (
 // @Tags Transaction
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {array} []entity.TransactionHistory
+// @Success 200 {array} []UserTransaction
 // @Router /transactions/my-transactions [get]
 func FindByUser(service *services.TransactionService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := c.GetInt("userId")
 		data := service.FindByUserId(userId)
-		c.JSON(http.StatusOK, data)
+		resp := []UserTransaction{}
+		for _, trx := range data {
+			userTrx := UserTransaction{
+				Id:         trx.Id,
+				ProductId:  trx.ProductId,
+				UserId:     trx.UserId,
+				Quantity:   trx.Quantity,
+				TotalPrice: trx.TotalPrice,
+				Product:    trx.Product,
+			}
+			resp = append(resp, userTrx)
+		}
+		c.JSON(http.StatusOK, resp)
 	}
 }
