@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -38,16 +37,7 @@ func main() {
 		log.Println("failed to load env file")
 	}
 
-	host := "localhost"
-	if len(os.Getenv("HOST")) > 0 {
-		host = os.Getenv("HOST")
-	}
-	port := "8080"
-	if len(os.Getenv("PORT")) > 0 {
-		port = os.Getenv("PORT")
-	}
-
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
+	docs.SwaggerInfo.Host = os.Getenv("HOST")
 
 	repo := repository.New(config.GetDBConfig())
 	userService := services.NewUserService(repo.User)
@@ -101,5 +91,5 @@ func main() {
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Run(fmt.Sprintf(":%s", port))
+	r.Run(":8080")
 }
