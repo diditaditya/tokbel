@@ -5,16 +5,20 @@ import (
 	"log"
 	"tokbel/entity"
 	"tokbel/repository/models"
+	"tokbel/repository/utils"
+	"tokbel/services/data"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type CategoryRepo struct {
-	db *gorm.DB
+	db     *gorm.DB
+	locker *utils.Locker
 }
 
-func New(db *gorm.DB) *CategoryRepo {
-	return &CategoryRepo{db: db}
+func New(db *gorm.DB, locker *utils.Locker) *CategoryRepo {
+	return &CategoryRepo{db: db, locker: locker}
 }
 
 func convertModelToEntity(source *models.Category) entity.Category {
@@ -68,9 +72,16 @@ func (repo *CategoryRepo) FindAll() []entity.Category {
 	return data
 }
 
-func (repo *CategoryRepo) FindById(id int) (*entity.Category, error) {
+func (repo *CategoryRepo) FindById(id int, lock *data.Lock) (*entity.Category, error) {
 	var found models.Category
-	result := repo.db.First(&found, id)
+	var result *gorm.DB
+	tx := repo.db
+	if lock == nil {
+		result = tx.First(&found, id)
+	} else {
+		tx = repo.locker.GetLock(lock)
+		result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&found, id)
+	}
 	if result.Error == nil {
 		data := convertModelToEntity(&found)
 		return &data, nil
@@ -97,9 +108,16 @@ func (repo *CategoryRepo) Create(category *entity.Category) (*entity.Category, e
 	return &data, nil
 }
 
-func (repo *CategoryRepo) Update(category *entity.Category) (*entity.Category, error) {
+func (repo *CategoryRepo) Update(category *entity.Category, lock *data.Lock) (*entity.Category, error) {
 	var found models.Category
-	result := repo.db.First(&found, category.Id)
+	var result *gorm.DB
+	tx := repo.db
+	if lock == nil {
+		result = tx.First(&found, category.Id)
+	} else {
+		tx = repo.locker.GetLock(lock)
+		result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&found, category.Id)
+	}
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("data not found")
@@ -108,7 +126,7 @@ func (repo *CategoryRepo) Update(category *entity.Category) (*entity.Category, e
 	}
 
 	model := convertEntityToModel(category)
-	result = repo.db.Save(&model)
+	result = tx.Save(&model)
 	if result.Error != nil {
 		return nil, errors.New("something went wrong")
 	}

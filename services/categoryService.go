@@ -24,13 +24,13 @@ func (service *CategoryService) FindAll() []entity.Category {
 }
 
 func (service *CategoryService) UpdateType(id int, categoryType string) (*entity.Category, error) {
-	found, err := service.categoryRepo.FindById(id)
+	found, err := service.categoryRepo.FindById(id, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	found.Type = categoryType
-	return service.categoryRepo.Update(found)
+	return service.categoryRepo.Update(found, nil)
 }
 
 func (service *CategoryService) Delete(id int) error {

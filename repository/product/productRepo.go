@@ -5,16 +5,20 @@ import (
 	"log"
 	"tokbel/entity"
 	"tokbel/repository/models"
+	"tokbel/repository/utils"
+	"tokbel/services/data"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ProductRepo struct {
-	db *gorm.DB
+	db     *gorm.DB
+	locker *utils.Locker
 }
 
-func New(db *gorm.DB) *ProductRepo {
-	return &ProductRepo{db: db}
+func New(db *gorm.DB, locker *utils.Locker) *ProductRepo {
+	return &ProductRepo{db: db, locker: locker}
 }
 
 func convertModelToEntity(source *models.Product) entity.Product {
@@ -61,9 +65,16 @@ func (repo *ProductRepo) FindAll() []entity.Product {
 	return data
 }
 
-func (repo *ProductRepo) FindById(id int) (*entity.Product, error) {
+func (repo *ProductRepo) FindById(id int, lock *data.Lock) (*entity.Product, error) {
 	var found models.Product
-	result := repo.db.First(&found, id)
+	var result *gorm.DB
+	tx := repo.db
+	if lock == nil {
+		result = tx.First(&found, id)
+	} else {
+		tx = repo.locker.GetLock(lock)
+		result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&found, id)
+	}
 	if result.Error == nil {
 		data := convertModelToEntity(&found)
 		return &data, nil
@@ -90,9 +101,16 @@ func (repo *ProductRepo) Create(product *entity.Product) (*entity.Product, error
 	return &data, nil
 }
 
-func (repo *ProductRepo) Update(product *entity.Product) (*entity.Product, error) {
+func (repo *ProductRepo) Update(product *entity.Product, lock *data.Lock) (*entity.Product, error) {
 	var found models.Product
-	result := repo.db.First(&found, product.Id)
+	var result *gorm.DB
+	tx := repo.db
+	if lock == nil {
+		result = tx.First(&found, product.Id)
+	} else {
+		tx = repo.locker.GetLock(lock)
+		result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&found, product.Id)
+	}
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("data not found")
@@ -101,7 +119,7 @@ func (repo *ProductRepo) Update(product *entity.Product) (*entity.Product, error
 	}
 
 	model := convertEntityToModel(product)
-	result = repo.db.Save(&model)
+	result = tx.Save(&model)
 	if result.Error != nil {
 		return nil, errors.New("something went wrong")
 	}

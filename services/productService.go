@@ -19,7 +19,7 @@ func NewProductService(productRepo data.ProductRepoInterface, categoryRepo data.
 }
 
 func (service *ProductService) Create(product *entity.Product) (*entity.Product, error) {
-	_, err := service.categoryRepo.FindById(product.CategoryId)
+	_, err := service.categoryRepo.FindById(product.CategoryId, nil)
 	if err != nil {
 		return nil, errors.New("category not found")
 	}
@@ -31,15 +31,15 @@ func (service *ProductService) FindAll() []entity.Product {
 }
 
 func (service *ProductService) FindById(id int) (*entity.Product, error) {
-	return service.productRepo.FindById(id)
+	return service.productRepo.FindById(id, nil)
 }
 
 func (service *ProductService) Update(product *entity.Product) (*entity.Product, error) {
-	_, err := service.categoryRepo.FindById(product.CategoryId)
+	_, err := service.categoryRepo.FindById(product.CategoryId, nil)
 	if err != nil {
 		return nil, errors.New("category not found")
 	}
-	return service.productRepo.Update(product)
+	return service.productRepo.Update(product, nil)
 }
 
 func (service *ProductService) Delete(id int) error {

@@ -322,7 +322,7 @@ const docTemplate = `{
                             "items": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/definitions/entity.TransactionHistory"
+                                    "$ref": "#/definitions/transaction.UserTransaction"
                                 }
                             }
                         }
@@ -559,6 +559,9 @@ const docTemplate = `{
                 "total_price": {
                     "type": "integer"
                 },
+                "user": {
+                    "$ref": "#/definitions/entity.User"
+                },
                 "user_id": {
                     "type": "integer"
                 }
@@ -587,9 +590,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "password": {
-                    "type": "string"
                 },
                 "role": {
                     "type": "string"
@@ -669,6 +669,29 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "transaction.UserTransaction": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "product": {
+                    "$ref": "#/definitions/entity.Product"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "total_price": {
+                    "type": "integer"
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }

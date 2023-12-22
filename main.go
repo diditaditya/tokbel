@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"tokbel/config"
 	"tokbel/docs"
@@ -42,9 +43,15 @@ func main() {
 	userService := services.NewUserService(repo.User)
 	categoryService := services.NewCategoryService(repo.Category)
 	productService := services.NewProductService(repo.Product, repo.Category)
-	trxService := services.NewTransactionService(repo.Transaction, repo.Product, repo.User, repo.Category)
+	trxService := services.NewTransactionService(repo.Locker, repo.Transaction, repo.Product, repo.User, repo.Category)
 
 	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Toko Belanja is up and running, please check the docs at /swagger/index.html",
+		})
+	})
 
 	v1 := r.Group("/api/v1")
 	{

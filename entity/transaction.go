@@ -11,5 +11,5 @@ type TransactionHistory struct {
 	CreatedAt  time.Time `json:"-"`
 	UpdatedAt  time.Time `json:"-"`
 	Product    Product   `json:"product"`
-	User       User      `json:"-"`
+	User       User      `json:"user"`
 }

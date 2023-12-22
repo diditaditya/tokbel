@@ -50,7 +50,7 @@ func (service *UserService) Login(email string, password string) (string, error)
 }
 
 func (service *UserService) FindById(id int) (*entity.User, error) {
-	found, err := service.userRepo.FindById(id)
+	found, err := service.userRepo.FindById(id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -68,13 +68,13 @@ func (service *UserService) FindByEmail(email string) (*entity.User, error) {
 }
 
 func (service *UserService) TopUp(id int, added int) (int, error) {
-	found, err := service.userRepo.FindById(id)
+	found, err := service.userRepo.FindById(id, nil)
 	if err != nil {
 		return 0, err
 	}
 
 	found.Balance = found.Balance + added
-	updated, err := service.userRepo.Update(found)
+	updated, err := service.userRepo.Update(found, nil)
 	if err != nil {
 		return 0, err
 	}
