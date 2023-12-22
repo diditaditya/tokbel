@@ -46,9 +46,10 @@ func Create(service *services.ProductService) gin.HandlerFunc {
 		}
 		created, err := service.Create(&product)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "error creating new product",
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"message": err.Error(),
 			})
+			return
 		}
 
 		c.JSON(http.StatusCreated, created)
