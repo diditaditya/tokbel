@@ -24,8 +24,7 @@ DB_PORT=yourPostgresPort
 DB_NAME=yourPostgresDBName
 DB_USER=yourPostgresUser
 DB_PASSWORD=yourPostgresPassword
-HOST=yourHostForTheApp
-PORT=yourPortForTheApp
+HOST=yourHostForTheSwagoWithPortIfNeeded
 JWT_SECRET=yourSecret
 ```
 
