@@ -65,9 +65,10 @@ func Update(service *services.ProductService) gin.HandlerFunc {
 
 		updated, err := service.Update(found)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "something went wrong",
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"message": err.Error(),
 			})
+			return
 		}
 
 		c.JSON(http.StatusOK, updated)
